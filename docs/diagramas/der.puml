@@ -1,0 +1,34 @@
+@startuml DER_Loja_Cupcakes
+
+' Configurações visuais
+hide circle
+skinparam linetype ortho
+
+entity "tb_cupcake" as cupcake {
+    * id : BIGINT <<PK, GENERATED>>
+    --
+    * nome : VARCHAR(100)
+    * descricao : VARCHAR(255)
+    * preco : NUMERIC(10,2)
+      imagem_url : VARCHAR(255)
+}
+
+entity "tb_usuario" as usuario {
+    * id : BIGINT <<PK, GENERATED>>
+    --
+    * nome : VARCHAR(100)
+    * email : VARCHAR(100) <<UNIQUE>>
+    * senha : VARCHAR(255)
+}
+
+note top of cupcake
+    Armazena o catálogo de produtos
+    exibidos na Home.
+end note
+
+note top of usuario
+    Armazena os dados do cliente para
+    autenticação no checkout.
+end note
+
+@enduml

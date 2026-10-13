@@ -1,0 +1,66 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# Compilação e Build do Gradle
+.gradle/
+
+# Arquivos do IntelliJ IDEA
+.idea/
+
+# Perfis de configuração local (para não subir no Git)
+.env
+src/main/resources/application-postgres-local.properties
+src/main/resources/application-h2.properties
+
+# Arquivos de Log e Temporários
+*.log
+.DS_Store
+
+# H2 Database Local (caso salve em arquivo)
+*.db
+
+# Gradle / Maven build outputs
+target/
+*.jar
+*.war
+
+# OS files
+Thumbs.db
+
+# Arquivos gerados pelo Spring Boot
+generated/

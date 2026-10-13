@@ -1,0 +1,154 @@
+@startuml Diagrama_Classes
+
+package "Model / Entity" {
+    class Cupcake {
+        - id: Long
+        - nome: String
+        - descricao: String
+        - preco: Double
+        - imagemUrl: String
+        - estoque: Integer
+        + getId(): Long
+        + setId(id: Long): void
+        + getNome(): String
+        + setNome(nome: String): void
+        + getDescricao(): String
+        + setDescricao(descricao: String): void
+        + getPreco(): Double
+        + setPreco(preco: Double): void
+        + getImagemUrl(): String
+        + setImagemUrl(imagemUrl: String): void
+        + getEstoque(): Integer
+        + setEstoque(estoque: Integer): void
+    }
+
+    class Usuario {
+        - id: Long
+        - nome: String
+        - email: String
+        - senha: String
+        - pedidos: List<Pedido>
+        + getId(): Long
+        + setId(id: Long): void
+        + getNome(): String
+        + setNome(nome: String): void
+        + getEmail(): String
+        + setEmail(email: String): void
+        + getSenha(): String
+        + setSenha(senha: String): void
+        + getPedidos(): List<Pedido>
+        + setPedidos(pedidos: List<Pedido>): void
+    }
+
+    class Pedido {
+        - id: Long
+        - dataPedido: LocalDateTime
+        - valorTotal: Double
+        - usuario: Usuario
+        - itens: List<ItemPedido>
+        + getId(): Long
+        + setId(id: Long): void
+        + getDataPedido(): LocalDateTime
+        + setDataPedido(dataPedido: LocalDateTime): void
+        + getValorTotal(): Double
+        + setValorTotal(valorTotal: Double): void
+        + getUsuario(): Usuario
+        + setUsuario(usuario: Usuario): void
+        + getItens(): List<ItemPedido>
+        + setItens(itens: List<ItemPedido>): void
+    }
+
+    class ItemPedido {
+        - id: Long
+        - pedido: Pedido
+        - cupcake: Cupcake
+        - quantidade: Integer
+        - precoUnitario: Double
+        + getId(): Long
+        + setId(id: Long): void
+        + getPedido(): Pedido
+        + setPedido(pedido: Pedido): void
+        + getCupcake(): Cupcake
+        + setCupcake(cupcake: Cupcake): void
+        + getQuantidade(): Integer
+        + setQuantidade(quantidade: Integer): void
+        + getPrecoUnitario(): Double
+        + setPrecoUnitario(precoUnitario: Double): void
+    }
+
+    class ItemCarrinho {
+        - cupcake: Cupcake
+        - quantidade: Integer
+        + getCupcake(): Cupcake
+        + setCupcake(cupcake: Cupcake): void
+        + getQuantidade(): Integer
+        + setQuantidade(quantidade: Integer): void
+        + getSubtotal(): Double
+    }
+
+    class Carrinho {
+        - itens: List<ItemCarrinho>
+        + adicionarItem(cupcake: Cupcake): void
+        + adicionarItem(cupcake: Cupcake, quantidade: int): void
+        + removerItem(cupcakeId: Long): void
+        + getItens(): List<ItemCarrinho>
+        + getTotal(): Double
+        + getQuantidadeTotal(): int
+        + limpar(): void
+    }
+}
+
+package "Repository" {
+    interface CupcakeRepository {
+        + findAll(): List<Cupcake>
+        + findById(id: Long): Optional<Cupcake>
+        + save(cupcake: Cupcake): Cupcake
+    }
+
+    interface UsuarioRepository {
+        + save(usuario: Usuario): Usuario
+        + findByEmail(email: String): Optional<Usuario>
+        + findByEmailAndSenha(email: String, senha: String): Optional<Usuario>
+    }
+
+    interface PedidoRepository {
+        + save(pedido: Pedido): Pedido
+        + findByUsuario(usuario: Usuario): List<Pedido>
+    }
+}
+
+package "Controller" {
+    class LojaController {
+        - cupcakeService: CupcakeService
+        - carrinho: Carrinho
+        + home(model: Model): String
+        + adicionarAoCarrinho(id: Long, quantidade: int): String
+        + exibirCarrinho(model: Model): String
+        + removerDoCarrinho(id: Long): String
+        + checkout(session: HttpSession, model: Model): String
+    }
+
+    class UsuarioController {
+        - usuarioService: UsuarioService
+        + formCadastro(model: Model): String
+        + cadastrar(usuario: Usuario, model: Model): String
+        + formLogin(redirect: String, model: Model): String
+        + login(email: String, senha: String, redirect: String, session: HttpSession, model: Model): String
+        + logout(session: HttpSession): String
+    }
+}
+
+' Relacionamentos
+Usuario "1" -- "0..*" Pedido : realiza >
+Pedido "1" *-- "1..*" ItemPedido : contem >
+ItemPedido "1" --> "1" Cupcake : refere-se >
+
+Carrinho "1" *-- "0..*" ItemCarrinho : contem >
+ItemCarrinho "1" --> "1" Cupcake : referencia >
+
+LojaController --> CupcakeRepository : usa
+LojaController --> PedidoRepository : usa
+LojaController --> Carrinho : injeta (SessionScope)
+UsuarioController --> UsuarioRepository : usa
+
+@enduml

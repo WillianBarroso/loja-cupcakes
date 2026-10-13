@@ -1,0 +1,49 @@
+@startuml Diagrama_Sequencia_Checkout
+
+actor Cliente as user
+participant "View (Thymeleaf)" as view
+participant "LojaController" as lojaCtrl
+participant "UsuarioController" as userCtrl
+participant "Carrinho (SessionScope)" as carrinho
+participant "UsuarioRepository" as userRepo
+database "PostgreSQL / H2" as db
+
+autonumber
+
+== 1. Tentativa de Finalizar Compra sem Autenticação ==
+user -> view : Clica em "Finalizar Compra"
+view -> lojaCtrl : GET /checkout
+lojaCtrl -> lojaCtrl : Verifica usuarioLogado na HttpSession
+
+alt Usuário Não Autenticado
+    lojaCtrl --> view : Redireciona para /login?redirect=checkout
+    view --> user : Exibe Tela de Login
+
+    opt Usuário não possui conta
+        user -> view : Clica em "Cadastrar-se"
+        view --> user : Exibe Form de Cadastro (/cadastro)
+        user -> userCtrl : POST /cadastro (nome, email, senha)
+        userCtrl -> userRepo : save(usuario)
+        userRepo -> db : INSERT INTO usuarios
+        db --> userRepo : Sucesso
+        userCtrl --> view : Redireciona para /login
+    end
+
+== 2. Efetuação do Login ==
+    user -> view : Preenche Email/Senha e clica em "Entrar"
+    view -> userCtrl : POST /login (email, senha, redirect=checkout)
+    userCtrl -> userRepo : findByEmailAndSenha(email, senha)
+    userRepo -> db : SELECT * FROM usuarios WHERE ...
+    db --> userRepo : Retorna Usuario
+    userCtrl -> userCtrl : Atribui usuarioLogado na HttpSession
+    userCtrl --> view : Redireciona para /checkout
+end
+
+== 3. Conclusão do Checkout ==
+view -> lojaCtrl : GET /checkout (agora autenticado)
+lojaCtrl -> carrinho : limpar()
+carrinho --> lojaCtrl : Carrinho esvaziado
+lojaCtrl --> view : Renderiza sucesso.html (Mensagem de Confirmação)
+view --> user : Exibe "Compra realizada com sucesso!"
+
+@endl

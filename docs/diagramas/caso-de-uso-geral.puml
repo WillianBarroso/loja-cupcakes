@@ -1,0 +1,26 @@
+@startuml Diagrama_Casos_de_Uso
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Cliente / Usuário" as cliente
+
+rectangle "Loja de Cupcakes (Spring Boot + Thymeleaf)" {
+    usecase "UC01: Visualizar Catálogo" as UC01
+    usecase "UC02: Adicionar Cupcake ao Carrinho" as UC02
+    usecase "UC03: Visualizar Carrinho" as UC03
+    usecase "UC04: Efetuar Cadastro" as UC04
+    usecase "UC05: Efetuar Login" as UC05
+    usecase "UC06: Finalizar Compra" as UC06
+}
+
+cliente --> UC01
+cliente --> UC02
+cliente --> UC03
+cliente --> UC04
+cliente --> UC05
+cliente --> UC06
+
+UC06 ..> UC05 : <<include>>
+UC05 ..> UC04 : <<extend>>
+
+@enduml
