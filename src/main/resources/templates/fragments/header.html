@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+
+<!-- Fragmento do Header (Equivalente ao include do PHP) -->
+<header th:fragment="headerComponente" class="header-nav sticky-top py-3 mb-5">
+    <div class="container d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <a href="#" th:href="@{/}" class="brand-logo">
+            CupcakeStore<span class="brand-dot">.</span>
+        </a>
+
+        <!-- Menu Principal -->
+        <nav class="d-flex align-items-center gap-4">
+            <!-- Links deslogado -->
+            <div th:if="${session.usuarioLogado == null}" class="d-flex gap-4 align-items-center">
+                <a th:href="@{/login}" class="nav-link-custom">Login</a>
+                <a th:href="@{/cadastro}" class="nav-link-custom">Cadastre-se</a>
+            </div>
+
+            <!-- Links logado -->
+            <div th:if="${session.usuarioLogado != null}" class="d-flex align-items-center gap-3 fs-6">
+                <span class="text-secondary small">Olá, <strong class="text-light" th:text="${session.usuarioLogado.nome}">Usuário</strong></span>
+                <a th:href="@{/logout}" class="text-danger small text-decoration-none">Sair</a>
+            </div>
+
+            <!-- Carrinho -->
+            <a th:href="@{/carrinho}" class="btn-orange-badge d-flex align-items-center gap-2">
+                Carrinho
+                <span th:if="${session.carrinho != null && session.carrinho.quantidadeTotal > 0}"
+                      class="badge bg-dark text-light rounded-circle"
+                      th:text="${session.carrinho.quantidadeTotal}">
+                        0
+                    </span>
+            </a>
+        </nav>
+    </div>
+</header>
+
+</body>
+</html>
