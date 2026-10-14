@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CupcakeStore - Meu Carrinho</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+          rel="stylesheet">
+
+    <!-- CSS Externo -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- INCLUDE DO HEADER UNIFICADO -->
+<header th:replace="~{fragments/header :: headerComponente}"></header>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<main class="container mb-5">
+
+    <!-- Título da Página -->
+    <h2 class="font-serif display-5 fw-normal text-light mb-4">Meu Carrinho<span
+            class="brand-dot">.</span></h2>
+
+    <!-- ESTADO 1: TELA DE SUCESSO DO SEGUNDO WIREFRAME -->
+    <div th:if="${sucesso}" class="p-5 text-center rounded-3 my-5"
+         style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+        <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center bg-success text-dark rounded-circle"
+                      style="width: 60px; height: 60px; font-size: 1.8rem; font-weight: bold;">
+                    ✓
+                </span>
+        </div>
+        <h3 class="font-serif display-6 text-light mb-2">Pedido realizado com
+            sucesso</h3>
+        <p class="cupcake-description mb-4 fs-5">Obrigado pela sua compra! Seu
+            pedido já está sendo preparado.</p>
+        <a th:href="@{/}"
+           class="btn-add-cart d-inline-block text-decoration-none px-4 py-2"
+           style="width: auto;">
+            Voltar para a loja
+        </a>
+    </div>
+
+    <!-- ESTADO 2: CARRINHO VAZIO (SEM SUCESSO) -->
+    <div th:if="${!sucesso && (session.carrinho == null || #lists.isEmpty(session.carrinho.itens))}"
+         class="p-5 text-center rounded-3 my-5"
+         style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+        <p class="cupcake-description fs-5 mb-4">O seu carrinho está vazio no
+            momento.</p>
+        <a th:href="@{/}"
+           class="btn-add-cart d-inline-block text-decoration-none px-4 py-2"
+           style="width: auto;">
+            Explorar Cupcakes
+        </a>
+    </div>
+
+    <!-- ESTADO 3: TABELA DO CARRINHO (PRIMEIRO WIREFRAME) -->
+    <div th:if="${!sucesso && session.carrinho != null && !#lists.isEmpty(session.carrinho.itens)}">
+
+        <div class="table-responsive p-4 rounded-3 mb-4"
+             style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+            <table class="table table-dark table-borderless align-middle mb-0"
+                   style="background: transparent;">
+                <thead>
+                <tr class="font-mono text-muted border-bottom"
+                    style="border-color: var(--border-color) !important; font-size: 0.85rem;">
+                    <th scope="col" class="py-3">Sabor</th>
+                    <th scope="col" class="py-3">Preço</th>
+                    <th scope="col" class="py-3 text-center">Quantidade</th>
+                    <th scope="col" class="py-3">Subtotal</th>
+                    <th scope="col" class="py-3 text-center">Ação</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${session.carrinho.itens}"
+                    class="border-bottom"
+                    style="border-color: rgba(255,255,255,0.05) !important;">
+                    <!-- Sabor (Nome do Cupcake) -->
+                    <td class="py-3">
+                        <span class="font-serif text-light fs-6"
+                              th:text="${item.cupcake.nome}">Chocolate</span>
+                    </td>
+
+                    <!-- Preço Unitário -->
+                    <td class="py-3 font-mono cupcake-description"
+                        th:text="${'R$ ' + #numbers.formatDecimal(item.cupcake.preco, 1, 'POINT', 2, 'COMMA')}">
+                        R$ 10,00
+                    </td>
+
+                    <!-- Quantidade -->
+                    <td class="py-3 text-center font-mono text-light fw-bold"
+                        th:text="${item.quantidade}">
+                        2
+                    </td>
+
+                    <!-- Subtotal -->
+                    <td class="py-3 font-mono fw-bold"
+                        style="color: var(--accent-orange);"
+                        th:text="${'R$ ' + #numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}">
+                        R$ 20,00
+                    </td>
+
+                    <!-- Ação (Remover) -->
+                    <td class="py-3 text-center">
+                        <form th:action="@{/carrinho/remover}" method="post"
+                              class="d-inline">
+                            <input type="hidden" name="id"
+                                   th:value="${item.cupcake.id}"/>
+                            <button type="submit"
+                                    class="btn btn-link text-decoration-underline text-secondary p-0 font-mono small hover-orange"
+                                    style="font-size: 0.85rem;">
+                                [remover]
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resumo e Botão Finalizar Pedido -->
+        <div class="d-flex flex-column align-items-end mt-4">
+            <div class="font-mono fs-4 fw-bold text-light mb-3">
+                Valor Total: <span style="color: var(--accent-orange);"
+                                   th:text="${'R$ ' + #numbers.formatDecimal(session.carrinho.valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 42,00</span>
+            </div>
+
+            <form th:action="@{/carrinho/finalizar}" method="post">
+                <button type="submit"
+                        class="btn-add-cart px-5 py-3 font-mono text-uppercase">
+                    Finalizar Pedido
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

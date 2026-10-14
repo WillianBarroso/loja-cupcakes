@@ -215,3 +215,15 @@ body {
 .details-link:hover {
     color: var(--accent-orange);
 }
+
+/* Melhora o contraste da descrição dos cupcakes */
+.cupcake-description {
+    color: #928e91 !important;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Estilo do rótulo de estoque */
+.cupcake-stock-label {
+    color: #a09a95;
+}
