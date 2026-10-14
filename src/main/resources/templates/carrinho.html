@@ -32,10 +32,10 @@
     <div th:if="${sucesso}" class="p-5 text-center rounded-3 my-5"
          style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
         <div class="mb-3">
-                <span class="d-inline-flex align-items-center justify-content-center bg-success text-dark rounded-circle"
-                      style="width: 60px; height: 60px; font-size: 1.8rem; font-weight: bold;">
-                    ✓
-                </span>
+            <span class="d-inline-flex align-items-center justify-content-center bg-success text-dark rounded-circle"
+                  style="width: 60px; height: 60px; font-size: 1.8rem; font-weight: bold;">
+                ✓
+            </span>
         </div>
         <h3 class="font-serif display-6 text-light mb-2">Pedido realizado com
             sucesso</h3>
@@ -49,7 +49,7 @@
     </div>
 
     <!-- ESTADO 2: CARRINHO VAZIO (SEM SUCESSO) -->
-    <div th:if="${!sucesso && (session.carrinho == null || #lists.isEmpty(session.carrinho.itens))}"
+    <div th:if="${!(sucesso ?: false) && (session.carrinho == null || #lists.isEmpty(session.carrinho.itens))}"
          class="p-5 text-center rounded-3 my-5"
          style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
         <p class="cupcake-description fs-5 mb-4">O seu carrinho está vazio no
@@ -129,15 +129,29 @@
         <div class="d-flex flex-column align-items-end mt-4">
             <div class="font-mono fs-4 fw-bold text-light mb-3">
                 Valor Total: <span style="color: var(--accent-orange);"
-                                   th:text="${'R$ ' + #numbers.formatDecimal(session.carrinho.valorTotal, 1, 'POINT', 2, 'COMMA')}">R$ 42,00</span>
+                                   th:text="${'R$ ' + #numbers.formatDecimal(session.carrinho.total, 1, 'POINT', 2, 'COMMA')}">
+                       R$ 42,00
+                   </span>
             </div>
 
-            <form th:action="@{/carrinho/finalizar}" method="post">
+            <!-- Se estiver LOGADO -->
+            <form th:if="${session.usuarioLogado != null}"
+                  th:action="@{/carrinho/finalizar}" method="post">
                 <button type="submit"
                         class="btn-add-cart px-5 py-3 font-mono text-uppercase">
                     Finalizar Pedido
                 </button>
             </form>
+
+            <!-- Se NÃO estiver LOGADO -->
+            <div th:if="${session.usuarioLogado == null}" class="text-end">
+                <p class="text-secondary font-mono small mb-2">Faça login para
+                    concluir sua compra</p>
+                <a th:href="@{/login}"
+                   class="btn-add-cart d-inline-block px-5 py-3 font-mono text-uppercase text-decoration-none">
+                    Fazer Login
+                </a>
+            </div>
         </div>
 
     </div>

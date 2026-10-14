@@ -227,3 +227,11 @@ body {
 .cupcake-stock-label {
     color: #a09a95;
 }
+
+/* Badge do Carrinho no Header */
+.badge.bg-orange {
+    background-color: var(--accent-orange) !important;
+    color: #121111 !important;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(255, 94, 26, 0.4);
+}
