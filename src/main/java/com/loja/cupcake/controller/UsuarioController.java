@@ -1,33 +1,41 @@
 package com.loja.cupcake.controller;
 
+import com.loja.cupcake.dto.UsuarioDTO;
 import com.loja.cupcake.model.Usuario;
 import com.loja.cupcake.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @Controller
-@RequiredArgsConstructor // Cria o construtor automaticamente para os campos final
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    @Autowired
     private final UsuarioService usuarioService;
 
     @GetMapping("/cadastro")
     public String formCadastro(Model model) {
-        model.addAttribute("usuario", new Usuario());
+        model.addAttribute("usuarioDTO", new UsuarioDTO());
         return "cadastro";
     }
 
     @PostMapping("/cadastro")
-    public String cadastrar(@ModelAttribute Usuario usuario, Model model) {
+    public String cadastrar(@Valid @ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO,
+                            BindingResult bindingResult,
+                            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return "cadastro";
+        }
+
         try {
-            usuarioService.cadastrarUsuario(usuario);
+            usuarioService.cadastrarUsuario(usuarioDTO);
             return "redirect:/login?cadastrado=true";
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
