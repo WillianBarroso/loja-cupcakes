@@ -147,7 +147,7 @@
             <div th:if="${session.usuarioLogado == null}" class="text-end">
                 <p class="text-secondary font-mono small mb-2">Faça login para
                     concluir sua compra</p>
-                <a th:href="@{/login}"
+                <a th:href="@{/login(redirect='checkout')}"
                    class="btn-add-cart d-inline-block px-5 py-3 font-mono text-uppercase text-decoration-none">
                     Fazer Login
                 </a>

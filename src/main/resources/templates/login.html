@@ -29,7 +29,15 @@
     <div class="login-card mt-4">
         <h2 class="login-title font-serif">Login</h2>
 
-        <!-- Mensagem de erro -->
+        <!-- Alerta exibido quando veio do botão "Fazer Login" do carrinho -->
+        <div th:if="${redirect == 'checkout' or param.redirect == 'checkout'}"
+             class="alert alert-dark-danger mb-4 d-flex align-items-center"
+             role="alert">
+            <i class="fa-solid fa-cart-shopping me-2"></i>
+            <span>Você precisa estar logado para finalizar o seu pedido!</span>
+        </div>
+
+        <!-- Mensagem de credenciais inválidas -->
         <div th:if="${erro}"
              class="alert alert-dark-danger mb-4 d-flex align-items-center"
              role="alert">
@@ -37,7 +45,7 @@
             <span th:text="${erro}">Credenciais inválidas!</span>
         </div>
 
-        <!-- Mensagem de sucesso -->
+        <!-- Mensagem de confirmação pós-cadastro -->
         <div th:if="${param.cadastrado}"
              class="alert alert-dark-success mb-4 d-flex align-items-center"
              role="alert">
@@ -68,10 +76,15 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-start gap-3 mt-4 pt-2">
-                <button type="submit" class="btn btn-orange-pill">Entrar
-                </button>
-                <a th:href="@{/}" class="btn btn-outline-pill">Voltar</a>
+            <!-- Botões de Ação: ENTRAR, CADASTRE-SE e VOLTAR -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-4 pt-2">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-orange-pill">Entrar
+                    </button>
+                    <a th:href="@{/cadastro}" class="btn btn-outline-pill">Cadastre-se</a>
+                </div>
+                <a th:href="@{/carrinho}" class="btn btn-outline-pill">Voltar ao
+                    Carrinho</a>
             </div>
         </form>
     </div>
