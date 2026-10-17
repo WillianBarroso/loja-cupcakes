@@ -17,59 +17,41 @@ public class CarrinhoService {
     @Autowired
     private CupcakeRepository cupcakeRepository;
 
-    public Carrinho obterCarrinho(HttpSession session) {
-        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-        if (carrinho == null) {
-            carrinho = new Carrinho();
-            session.setAttribute("carrinho", carrinho);
-        }
+    @Autowired
+    private Carrinho carrinho; // Injeta o bean @SessionScope do Spring diretamente
+
+    public Carrinho obterCarrinho() {
         return carrinho;
     }
 
-    public void adicionarItem(Long cupcakeId, Integer quantidade, HttpSession session) {
-        if (cupcakeId == null) return;
+    public void adicionarItem(Long cupcakeId, Integer quantidade) {
+        if (cupcakeId == null || quantidade == null || quantidade <= 0) return;
 
-        Optional<Cupcake> cupcakeOpt = cupcakeRepository.findById(cupcakeId);
-
-        if (cupcakeOpt.isPresent()) {
-            Cupcake cupcake = cupcakeOpt.get();
-            Carrinho carrinho = obterCarrinho(session);
+        cupcakeRepository.findById(cupcakeId).ifPresent(cupcake -> {
             carrinho.adicionarItem(cupcake, quantidade);
-            session.setAttribute("carrinho", carrinho);
-        }
+        });
     }
 
-    public void removerItem(Long cupcakeId, HttpSession session) {
-        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-        if (carrinho != null) {
-            carrinho.removerItem(cupcakeId);
-            session.setAttribute("carrinho", carrinho);
-        }
+    public void removerItem(Long cupcakeId) {
+        carrinho.removerItem(cupcakeId);
     }
 
     @Transactional
     public boolean finalizarPedido(HttpSession session) {
-        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-
-        if (carrinho == null || carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
+        if (carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
             return false;
         }
 
-        // Abate o estoque de cada produto no banco de dados
         for (ItemCarrinho item : carrinho.getItens()) {
-            Cupcake cupcake = item.getCupcake();
-            Cupcake cupcakeBanco = cupcakeRepository.findById(cupcake.getId())
-                    .orElseThrow(() -> new RuntimeException("Cupcake não encontrado: " + cupcake.getId()));
+            Cupcake cupcakeBanco = cupcakeRepository.findById(item.getCupcake().getId())
+                    .orElseThrow(() -> new RuntimeException("Cupcake não encontrado: " + item.getCupcake().getId()));
 
             int novoEstoque = cupcakeBanco.getEstoque() - item.getQuantidade();
             cupcakeBanco.setEstoque(Math.max(novoEstoque, 0));
-
             cupcakeRepository.save(cupcakeBanco);
         }
 
-        // Limpa o carrinho na sessão
         carrinho.limpar();
-        session.setAttribute("carrinho", carrinho);
         return true;
     }
 }
