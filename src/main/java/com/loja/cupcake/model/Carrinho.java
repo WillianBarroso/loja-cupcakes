@@ -1,6 +1,7 @@
 package com.loja.cupcake.model;
 
 import lombok.Getter;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Component
-@SessionScope
+@SessionScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Carrinho {
 
     private final List<ItemCarrinho> itens = new ArrayList<>();
