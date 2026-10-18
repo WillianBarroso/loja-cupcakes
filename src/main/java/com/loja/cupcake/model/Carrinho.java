@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Component
-@SessionScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Carrinho {
 
     private final List<ItemCarrinho> itens = new ArrayList<>();
