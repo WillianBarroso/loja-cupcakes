@@ -54,8 +54,8 @@
         </div>
 
         <form th:action="@{/login}" method="post">
-            <input type="hidden" name="redirect" th:value="${redirect}">
-
+            <input type="hidden" name="redirect"
+                   th:value="${param.redirect != null ? param.redirect : redirect}">
             <div class="mb-3 row align-items-center">
                 <label for="email"
                        class="col-sm-3 col-form-label form-label-custom">Email:</label>

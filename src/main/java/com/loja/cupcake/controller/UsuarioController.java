@@ -61,7 +61,7 @@ public class UsuarioController {
         if (usuarioOpt.isPresent()) {
             session.setAttribute("usuarioLogado", usuarioOpt.get());
             if ("checkout".equals(redirect)) {
-                return "redirect:/checkout";
+                return "redirect:/carrinho";
             }
             return "redirect:/";
         }
