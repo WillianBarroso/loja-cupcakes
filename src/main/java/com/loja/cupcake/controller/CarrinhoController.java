@@ -21,7 +21,7 @@ public class CarrinhoController {
         if (!model.containsAttribute("sucesso")) {
             model.addAttribute("sucesso", false);
         }
-        model.addAttribute("carrinho", carrinhoService.obterCarrinho());
+        model.addAttribute("carrinho", carrinhoService.obterCarrinho(session));
         return "carrinho";
     }
 
@@ -30,14 +30,14 @@ public class CarrinhoController {
     public String adicionarAoCarrinho(@RequestParam("id") Long id,
                                       @RequestParam(value = "quantidade", defaultValue = "1") Integer quantidade,
                                       HttpSession session) {
-        carrinhoService.adicionarItem(id, quantidade);
+        carrinhoService.adicionarItem(id, quantidade, session);
         return "redirect:/";
     }
 
     // Remove um item e recarrega o carrinho (redirect:/carrinho) -> passa a session
     @PostMapping("/remover")
     public String removerDoCarrinho(@RequestParam("id") Long id, HttpSession session) {
-        carrinhoService.removerItem(id);
+        carrinhoService.removerItem(id, session);
         return "redirect:/carrinho";
     }
 
