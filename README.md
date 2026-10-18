@@ -1,4 +1,4 @@
-# Projeto Integrador Transdisciplinar em Engenharia de Software II
+# Projeto Integrador Transdisciplinar em Engenharia de Software II - Universidade Cruzeiro do Sul
 
 # 🧁 Loja de Cupcakes
 
